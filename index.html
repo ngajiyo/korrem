@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donasi Korrem - Komunitas Relawan Resik-Resik Masjid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-center items-center">
+            <img src="logo korem.jpg" alt="Logo Korrem" class="h-14 object-contain" onerror="this.src='https://placehold.co/400x120?text=KORREM+SRAGEN'">
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
+        
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+            <img src="donasi korrem.jpg" alt="Poster Donasi Korrem" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/600x800?text=Poster+Donasi+Korrem'">
+            <div class="p-5">
+                <span class="bg-teal-50 text-teal-700 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Program Sosial</span>
+                <h1 class="text-xl font-bold mt-3 text-slate-900 leading-snug">
+                    Sedekah Alat-Alat Kebersihan & Pengadaan Armada Sosial Resik-Resik Masjid
+                </h1>
+                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                    Mari ambil bagian dalam menjaga kesucian dan kenyamanan rumah Allah bersama Komunitas Relawan Resik-Resik Masjid (KORREM).
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-teal-600"></i> Informasi Rekening Donasi
+            </h2>
+            
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 relative group">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bank Syariah Indonesia (BSI)</p>
+                        <p id="norek" class="text-xl font-bold text-slate-800 tracking-wide mt-1">7254125096</p>
+                        <p class="text-xs text-slate-500 mt-1">a.n Komunitas Relawan ResikResik Masjid</p>
+                    </div>
+                    <button onclick="copyToClipboard()" class="bg-white hover:bg-teal-50 text-slate-600 hover:text-teal-600 border border-slate-200 hover:border-teal-200 text-xs font-medium px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 shadow-sm active:scale-95">
+                        <i id="copy-icon" class="fa-regular fa-copy"></i> <span id="copy-text">Salin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center space-y-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-qrcode text-teal-600"></i> Scan QR Code
+            </h2>
+            <p class="text-xs text-slate-500">Anda dapat melakukan scan langsung melalui aplikasi M-Banking atau E-Wallet (Gopay, OVO, Dana, LinkAja).</p>
+            <div class="bg-slate-50 p-4 rounded-xl inline-block border border-slate-100">
+                <img src="donasi korrem.jpg" alt="QR Code Donasi" class="w-48 h-48 object-cover mx-auto rounded-lg shadow-inner" style="object-position: bottom center;">
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">Media Sosial & Informasi</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <a href="https://instagram.com/korrem_99" target="_blank" class="flex items-center gap-2 p-3 bg-slate-50 hover:bg-pink-50 text-slate-700 hover:text-pink-600 rounded-xl text-sm font-medium transition-colors border border-slate-100">
+                    <i class="fa-brands fa-instagram text-base"></i> @korrem_99
+                </a>
+                <a href="#" target="_blank" class="flex items-center gap-2 p-3 bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-xl text-sm font-medium transition-colors border border-slate-100">
+                    <i class="fa-brands fa-facebook text-base"></i> Korrem Sem Sem
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-50">
+        <div class="max-w-md mx-auto">
+            <a href="https://wa.me/6282335223009?text=Assalamualaikum%20Admin%20Korrem,%20Saya%20ingin%20mengonfirmasi%20donasi%20untuk%20Resik-Resik%20Masjid." 
+               target="_blank" 
+               class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-colors active:scale-[0.99]">
+                <i class="fa-brands fa-whatsapp text-lg"></i> Konfirmasi Donasi (WhatsApp)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const norekText = document.getElementById('norek').innerText;
+            navigator.clipboard.writeText(norekText).then(() => {
+                const copyText = document.getElementById('copy-text');
+                const copyIcon = document.getElementById('copy-icon');
+                
+                // Mengubah UI saat berhasil disalin
+                copyText.innerText = 'Tersalin!';
+                copyIcon.className = 'fa-solid fa-check text-emerald-500';
+                
+                // Mengembalikan UI ke semula setelah 2 detik
+                setTimeout(() => {
+                    copyText.innerText = 'Salin';
+                    copyIcon.className = 'fa-regular fa-copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
