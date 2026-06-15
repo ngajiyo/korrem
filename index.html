@@ -15,6 +15,84 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        /* ===== GALLERY CAROUSEL ===== */
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #f8fafc;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            border-radius: 1rem;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px);
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
+            transition: background 0.2s, transform 0.1s;
+            color: #334155;
+            font-size: 13px;
+        }
+        .carousel-btn:active { transform: translateY(-50%) scale(0.92); }
+        .carousel-btn.prev { left: 8px; }
+        .carousel-btn.next { right: 8px; }
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 0 4px;
+        }
+        .carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: background 0.2s, width 0.2s;
+            cursor: pointer;
+        }
+        .carousel-dot.active {
+            background: #0f766e;
+            width: 18px;
+            border-radius: 3px;
+        }
+        .carousel-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            background: rgba(0,0,0,0.45);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased pb-24">
@@ -100,7 +178,54 @@
                     </div>
                 </div>
             </div>
+
+            <!-- GAMBAR QRIS -->
+            <div class="pt-2">
+                <img src="qris korrem.jpg" alt="QRIS Korrem" class="w-full rounded-xl border border-slate-100 shadow-sm" onerror="this.src='https://placehold.co/600x600?text=QRIS+KORREM'">
+            </div>
         </div>
+
+        <!-- ===== MINI GALLERY CAROUSEL ===== -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-images text-teal-600"></i> Galeri Kegiatan Korrem
+            </h2>
+
+            <div class="carousel-wrapper">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <img src="0.jpg" alt="Kegiatan Korrem 1" onerror="this.src='https://placehold.co/600x220?text=Foto+Kegiatan+1'">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="2.jpg" alt="Kegiatan Korrem 2" onerror="this.src='https://placehold.co/600x220?text=Foto+Kegiatan+2'">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="3.jpg" alt="Kegiatan Korrem 3" onerror="this.src='https://placehold.co/600x220?text=Foto+Kegiatan+3'">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="4.jpg" alt="Kegiatan Korrem 4" onerror="this.src='https://placehold.co/600x220?text=Foto+Kegiatan+4'">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="5.jpg" alt="Kegiatan Korrem 5" onerror="this.src='https://placehold.co/600x220?text=Foto+Kegiatan+5'">
+                    </div>
+                </div>
+
+                <!-- Tombol Prev / Next -->
+                <button class="carousel-btn prev" id="carouselPrev" aria-label="Sebelumnya">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn next" id="carouselNext" aria-label="Selanjutnya">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- Counter pojok kanan bawah -->
+                <div class="carousel-counter" id="carouselCounter">1 / 5</div>
+            </div>
+
+            <!-- Dot Indicator -->
+            <div class="carousel-dots" id="carouselDots"></div>
+        </div>
+        <!-- ===== END CAROUSEL ===== -->
 
         <!-- AGENDA & JADWAL KALENDER -->
         <div class="border-t border-slate-200/60 pt-2">
@@ -263,26 +388,82 @@
 
     <!-- LOGIKA INTERAKTIF SCRIPT -->
     <script>
-        // --- 1. SCRIPT LOGIKA DONASI (DIUBAH MENJADI DINAMIS MULTI-BANK) ---
+        // --- 1. SCRIPT LOGIKA DONASI ---
         function copyToClipboard(norekId, textId, iconId) {
             const norekText = document.getElementById(norekId).innerText;
             navigator.clipboard.writeText(norekText).then(() => {
                 const copyText = document.getElementById(textId);
                 const copyIcon = document.getElementById(iconId);
-                
                 copyText.innerText = 'Tersalin!';
                 copyIcon.className = 'fa-solid fa-check text-emerald-500';
-                
                 setTimeout(() => {
                     copyText.innerText = 'Salin';
                     copyIcon.className = 'fa-regular fa-copy';
                 }, 2000);
-            }).catch(err => {
-                console.error('Gagal menyalin text: ', err);
-            });
+            }).catch(err => console.error('Gagal menyalin text: ', err));
         }
 
-        // --- 2. SCRIPT LOGIKA KALENDER SUPABASE ---
+        // --- 2. SCRIPT GALLERY CAROUSEL ---
+        (function() {
+            const TOTAL = 5;
+            let current = 0;
+            let autoTimer = null;
+
+            const track   = document.getElementById('carouselTrack');
+            const prev    = document.getElementById('carouselPrev');
+            const next    = document.getElementById('carouselNext');
+            const counter = document.getElementById('carouselCounter');
+            const dotsEl  = document.getElementById('carouselDots');
+
+            // Buat dots
+            for (let i = 0; i < TOTAL; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => goTo(i));
+                dotsEl.appendChild(dot);
+            }
+
+            function update() {
+                track.style.transform = `translateX(-${current * 100}%)`;
+                counter.textContent = `${current + 1} / ${TOTAL}`;
+                dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === current);
+                });
+            }
+
+            function goTo(idx) {
+                current = (idx + TOTAL) % TOTAL;
+                update();
+            }
+
+            prev.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
+            next.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+
+            // Swipe touch support
+            let touchStartX = 0;
+            track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+            track.addEventListener('touchend', e => {
+                const diff = touchStartX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) {
+                    diff > 0 ? goTo(current + 1) : goTo(current - 1);
+                    resetAuto();
+                }
+            }, { passive: true });
+
+            // Auto-play setiap 4 detik
+            function startAuto() {
+                autoTimer = setInterval(() => goTo(current + 1), 4000);
+            }
+            function resetAuto() {
+                clearInterval(autoTimer);
+                startAuto();
+            }
+
+            update();
+            startAuto();
+        })();
+
+        // --- 3. SCRIPT LOGIKA KALENDER SUPABASE ---
         const SUPABASE_URL = "https://pfichwnfffjzibusofao.supabase.co"; 
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmaWNod25mZmZqemlidXNvZmFvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTgzMTQ2MiwiZXhwIjoyMDgxNDA3NDYyfQ.dDx1TLlOGT_ZYRWrRh8Rj1-3sn7tFhiAawiUb02KsVs";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -334,7 +515,6 @@
             opt.innerText = bulan;
             selectMonth.appendChild(opt);
           });
-
           const startYear = 2018;
           const endYear = new Date().getFullYear() + 5;
           for (let y = startYear; y <= endYear; y++) {
@@ -346,127 +526,67 @@
         }
 
         async function fetchCounterMasjid() {
-          const { count: totalCount, error: errTotal } = await supabaseClient
-            .from('masjid_schedules')
-            .select('*', { count: 'exact', head: true });
-
-          const { count: selesaiCount, error: errSelesai } = await supabaseClient
-            .from('masjid_schedules')
-            .select('*', { count: 'exact', head: true })
-            .eq('status_selesai', true);
-
-          if (!errTotal && totalCount !== null) {
-            document.getElementById('counter-total').innerText = totalCount;
-          }
-          if (!errSelesai && selesaiCount !== null) {
-            document.getElementById('counter-selesai').innerText = selesaiCount;
-          }
+          const { count: totalCount } = await supabaseClient.from('masjid_schedules').select('*', { count: 'exact', head: true });
+          const { count: selesaiCount } = await supabaseClient.from('masjid_schedules').select('*', { count: 'exact', head: true }).eq('status_selesai', true);
+          if (totalCount !== null) document.getElementById('counter-total').innerText = totalCount;
+          if (selesaiCount !== null) document.getElementById('counter-selesai').innerText = selesaiCount;
         }
 
         async function fetchSchedules() {
           const year = currentDate.getFullYear();
           const month = currentDate.getMonth();
-          
           const firstDayObj = new Date(year, month, 1);
           const lastDayObj = new Date(year, month + 1, 0);
-
           const firstDay = `${firstDayObj.getFullYear()}-${String(firstDayObj.getMonth() + 1).padStart(2, '0')}-01`;
           const lastDay = `${lastDayObj.getFullYear()}-${String(lastDayObj.getMonth() + 1).padStart(2, '0')}-${String(lastDayObj.getDate()).padStart(2, '0')}`;
-
-          const { data, error } = await supabaseClient
-            .from('masjid_schedules')
-            .select('*')
-            .gte('jadwal_dibersihkan', firstDay)
-            .lte('jadwal_dibersihkan', lastDay);
-
-          if (!error && data) {
-            schedules = data;
-          }
-          
+          const { data, error } = await supabaseClient.from('masjid_schedules').select('*').gte('jadwal_dibersihkan', firstDay).lte('jadwal_dibersihkan', lastDay);
+          if (!error && data) schedules = data;
           renderCalendar();
           if (selectedDateStr) renderDetail();
         }
 
         async function fetchNextAgendaGlobal() {
           const todayStr = formatDateLocal(new Date());
-
-          const { data, error } = await supabaseClient
-            .from('masjid_schedules')
-            .select('*')
-            .gte('jadwal_dibersihkan', todayStr)
-            .order('jadwal_dibersihkan', { ascending: true })
-            .order('aksi_ke', { ascending: true })
-            .limit(10);
-
-          if (!error && data) {
-            renderNextAgenda(data);
-          }
+          const { data, error } = await supabaseClient.from('masjid_schedules').select('*').gte('jadwal_dibersihkan', todayStr).order('jadwal_dibersihkan', { ascending: true }).order('aksi_ke', { ascending: true }).limit(10);
+          if (!error && data) renderNextAgenda(data);
         }
 
         function renderCalendar() {
           monthYearTitle.querySelector('span').innerText = currentDate.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
-          
           selectMonth.value = currentDate.getMonth();
           selectYear.value = currentDate.getFullYear();
-
           calendarGrid.innerHTML = '';
-
           const year = currentDate.getFullYear();
           const month = currentDate.getMonth();
-          
           let startDay = new Date(year, month, 1).getDay();
           startDay = startDay === 0 ? 6 : startDay - 1;
-
           const totalDays = new Date(year, month + 1, 0).getDate();
           const todayStr = formatDateLocal(new Date());
-
-          for (let i = 0; i < startDay; i++) {
-            calendarGrid.appendChild(document.createElement('div'));
-          }
-
+          for (let i = 0; i < startDay; i++) calendarGrid.appendChild(document.createElement('div'));
           for (let day = 1; day <= totalDays; day++) {
             const date = new Date(year, month, day);
             const dateStr = formatDateLocal(date);
-            
             const daySchedules = schedules.filter(s => s.jadwal_dibersihkan === dateStr);
             const hasSchedule = daySchedules.length > 0;
             const isAllFinished = hasSchedule && daySchedules.every(s => s.status_selesai === true);
-
             const isSelected = selectedDateStr === dateStr;
             const isToday = todayStr === dateStr;
-
             const btn = document.createElement('button');
             btn.type = 'button';
-            
             let baseColors = 'text-slate-700 hover:bg-gray-100';
             let outlineStyle = '';
-
-            if (isToday) {
-              baseColors = 'bg-blue-700 text-white font-bold shadow-md';
-            } else if (isAllFinished) {
-              baseColors = 'border-2 border-green-500 bg-green-50 text-green-700 font-bold';
-            } else if (hasSchedule) {
-              baseColors = 'border-2 border-red-500 bg-red-50 text-red-700 font-bold';
-            }
-
-            if (isSelected) {
-              outlineStyle = 'ring-2 ring-blue-500 ring-offset-2';
-            }
-
+            if (isToday) baseColors = 'bg-blue-700 text-white font-bold shadow-md';
+            else if (isAllFinished) baseColors = 'border-2 border-green-500 bg-green-50 text-green-700 font-bold';
+            else if (hasSchedule) baseColors = 'border-2 border-red-500 bg-red-50 text-red-700 font-bold';
+            if (isSelected) outlineStyle = 'ring-2 ring-blue-500 ring-offset-2';
             btn.className = `relative py-2.5 text-sm font-medium rounded-full flex flex-col items-center justify-center transition active:scale-95 aspect-square ${baseColors} ${outlineStyle}`;
             btn.innerText = day;
-
             btn.onclick = () => {
               selectedDateStr = isSelected ? null : dateStr;
-              if(selectedDateStr) {
-                detailCard.classList.remove('hidden');
-                renderDetail();
-              } else {
-                detailCard.classList.add('hidden');
-              }
+              if (selectedDateStr) { detailCard.classList.remove('hidden'); renderDetail(); }
+              else detailCard.classList.add('hidden');
               renderCalendar();
             };
-
             calendarGrid.appendChild(btn);
           }
         }
@@ -474,35 +594,21 @@
         function renderDetail() {
           detailDateTitle.innerText = `Jadwal Tanggal: ${new Date(selectedDateStr).toLocaleDateString('id-ID', { dateStyle: 'medium' })}`;
           detailList.innerHTML = '';
-
-          const activeSchedules = schedules
-            .filter(s => s.jadwal_dibersihkan === selectedDateStr)
-            .sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
-
+          const activeSchedules = schedules.filter(s => s.jadwal_dibersihkan === selectedDateStr).sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
           if (activeSchedules.length === 0) {
             detailList.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">Tidak ada jadwal pembersihan di bulan yang aktif.</p>`;
             return;
           }
-
           activeSchedules.forEach(item => {
             let socialLinksHtml = '';
             if (item.link_instagram || item.link_facebook) {
-              socialLinksHtml += `<div class="flex gap-1.5 pt-1.5 items-center flex-wrap">
-                <span class="text-[10px] text-gray-400 font-medium">Dokumentasi:</span>`;
-              if (item.link_instagram) {
-                socialLinksHtml += `<a href="${item.link_instagram}" target="_blank" class="bg-gradient-to-tr from-yellow-500 via-purple-500 to-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-semibold">📸 Instagram</a>`;
-              }
-              if (item.link_facebook) {
-                socialLinksHtml += `<a href="${item.link_facebook}" target="_blank" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-semibold">👥 Facebook</a>`;
-              }
+              socialLinksHtml += `<div class="flex gap-1.5 pt-1.5 items-center flex-wrap"><span class="text-[10px] text-gray-400 font-medium">Dokumentasi:</span>`;
+              if (item.link_instagram) socialLinksHtml += `<a href="${item.link_instagram}" target="_blank" class="bg-gradient-to-tr from-yellow-500 via-purple-500 to-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-semibold">📸 Instagram</a>`;
+              if (item.link_facebook) socialLinksHtml += `<a href="${item.link_facebook}" target="_blank" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-semibold">👥 Facebook</a>`;
               socialLinksHtml += `</div>`;
             }
-
             let gmapsHtml = '';
-            if (item.gmaps) {
-              gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
-            }
-
+            if (item.gmaps) gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
             const div = document.createElement('div');
             div.className = "p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100 shadow-sm";
             div.innerHTML = `
@@ -519,9 +625,7 @@
                 </span>
               </div>
               <p class="text-xs text-gray-600">📍 ${item.alamat_masjid}</p>
-              
               ${socialLinksHtml}
-
               <div class="text-xs text-gray-500 pt-2 border-t border-dashed flex justify-between items-center">
                 <div><p class="font-medium text-slate-700">Takmir: ${item.nama_takmir}</p></div>
                 <a href="https://wa.me/${item.no_wa_takmir ? item.no_wa_takmir.replace(/[^0-9]/g, '') : ''}" target="_blank" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold text-[11px]">💬 WhatsApp</a>
@@ -537,25 +641,11 @@
 
         function handleSearch() {
           const keyword = searchInput.value.toLowerCase().trim();
-          if (!keyword) {
-            searchResultsList.innerHTML = '';
-            searchResultsList.classList.add('hidden');
-            return;
-          }
-
-          const filtered = schedules.filter(s => 
-            s.nama_masjid.toLowerCase().includes(keyword) || 
-            s.alamat_masjid.toLowerCase().includes(keyword)
-          ).sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
-
+          if (!keyword) { searchResultsList.innerHTML = ''; searchResultsList.classList.add('hidden'); return; }
+          const filtered = schedules.filter(s => s.nama_masjid.toLowerCase().includes(keyword) || s.alamat_masjid.toLowerCase().includes(keyword)).sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
           searchResultsList.innerHTML = '';
           searchResultsList.classList.remove('hidden');
-
-          if (filtered.length === 0) {
-            searchResultsList.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Masjid tidak ditemukan di bulan ini.</p>`;
-            return;
-          }
-
+          if (filtered.length === 0) { searchResultsList.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Masjid tidak ditemukan di bulan ini.</p>`; return; }
           filtered.forEach(item => {
             const div = document.createElement('div');
             div.className = "p-2.5 bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-xl flex justify-between items-center gap-2 cursor-pointer transition active:scale-[0.99]";
@@ -582,16 +672,10 @@
 
         function renderNextAgenda(nextAgendas) {
           nextAgendaList.innerHTML = '';
-
-          if (nextAgendas.length === 0) {
-            nextAgendaList.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-gray-400 border border-gray-200 text-sm shadow-sm">Belum ada agenda terdekat.</div>`;
-            return;
-          }
-
+          if (nextAgendas.length === 0) { nextAgendaList.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-gray-400 border border-gray-200 text-sm shadow-sm">Belum ada agenda terdekat.</div>`; return; }
           nextAgendas.forEach(item => {
             const div = document.createElement('div');
             div.className = "bg-white rounded-2xl p-3 shadow-sm border border-gray-200 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition active:scale-[0.99]";
-            
             div.onclick = () => {
               const targetDate = new Date(item.jadwal_dibersihkan);
               currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
@@ -599,12 +683,8 @@
               detailCard.classList.remove('hidden');
               fetchSchedules();
             };
-
             let inlineGmaps = '';
-            if (item.gmaps) {
-              inlineGmaps = `<a href="${item.gmaps}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700 font-semibold text-[11px] inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">🗺️ Map</a>`;
-            }
-
+            if (item.gmaps) inlineGmaps = `<a href="${item.gmaps}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700 font-semibold text-[11px] inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">🗺️ Map</a>`;
             div.innerHTML = `
               <div class="min-w-0 flex-1">
                 <span class="inline-block text-[9px] font-bold bg-slate-100 text-slate-600 px-1 rounded mb-0.5">Aksi Ke-${item.aksi_ke || '-'}</span>
@@ -626,32 +706,21 @@
 
         function setupEventListeners() {
           searchInput.addEventListener('input', handleSearch);
-
-          monthYearTitle.onclick = (e) => {
-            e.stopPropagation();
-            navDropdown.classList.toggle('hidden');
-          };
-
+          monthYearTitle.onclick = (e) => { e.stopPropagation(); navDropdown.classList.toggle('hidden'); };
           const handleDropdownChange = () => {
             currentDate = new Date(parseInt(selectYear.value), parseInt(selectMonth.value), 1);
             navDropdown.classList.add('hidden');
             fetchSchedules();
           };
-
           selectMonth.onchange = handleDropdownChange;
           selectYear.onchange = handleDropdownChange;
-
-          document.addEventListener('click', () => {
-            navDropdown.classList.add('hidden');
-          });
+          document.addEventListener('click', () => navDropdown.classList.add('hidden'));
           navDropdown.onclick = (e) => e.stopPropagation();
-
           headerTitle.onclick = () => {
             if (isAdmin) return;
             clickCount++;
             if (clickCount === 5) {
-              isAdmin = true;
-              clickCount = 0;
+              isAdmin = true; clickCount = 0;
               alert('🔓 Mode Administrator Aktif!');
               adminActions.classList.remove('hidden');
               headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">Admin Active</span>';
@@ -659,37 +728,25 @@
             }
             setTimeout(() => { clickCount = 0; }, 3000);
           };
-
           document.getElementById('btn-exit-admin').onclick = () => {
             isAdmin = false;
             adminActions.classList.add('hidden');
             headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-normal text-slate-300">Mode</span>';
             if (selectedDateStr) renderDetail();
           };
-
-          document.getElementById('btn-prev-month').onclick = () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            fetchSchedules();
-          };
-          document.getElementById('btn-next-month').onclick = () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            fetchSchedules();
-          };
-
+          document.getElementById('btn-prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); fetchSchedules(); };
+          document.getElementById('btn-next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); fetchSchedules(); };
           document.getElementById('btn-today').onclick = () => {
             const today = new Date();
             currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
             selectedDateStr = formatDateLocal(today);
-            
             detailCard.classList.remove('hidden');
-            fetchSchedules(); 
+            fetchSchedules();
           };
-
           document.getElementById('btn-add').onclick = () => {
             document.getElementById('modal-title').innerText = "Tambah Jadwal Korrem";
             scheduleForm.reset();
             document.getElementById('form-id').value = '';
-            
             if (selectedDateStr) {
               document.getElementById('form-tanggal').value = selectedDateStr;
               const countToday = schedules.filter(s => s.jadwal_dibersihkan === selectedDateStr).length;
@@ -700,14 +757,12 @@
             }
             modalForm.classList.remove('hidden');
           };
-
           document.getElementById('btn-cancel-form').onclick = () => modalForm.classList.add('hidden');
           document.getElementById('btn-close-detail').onclick = () => {
             selectedDateStr = null;
             detailCard.classList.add('hidden');
             renderCalendar();
           };
-
           scheduleForm.onsubmit = async (e) => {
             e.preventDefault();
             const id = document.getElementById('form-id').value;
@@ -723,13 +778,8 @@
               link_instagram: document.getElementById('form-instagram').value,
               link_facebook: document.getElementById('form-facebook').value
             };
-
-            if (id) {
-              await supabaseClient.from('masjid_schedules').update(payload).eq('id', id);
-            } else {
-              await supabaseClient.from('masjid_schedules').insert([payload]);
-            }
-
+            if (id) await supabaseClient.from('masjid_schedules').update(payload).eq('id', id);
+            else await supabaseClient.from('masjid_schedules').insert([payload]);
             modalForm.classList.add('hidden');
             fetchSchedules();
             fetchNextAgendaGlobal();
