@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donasi Korrem - Komunitas Relawan Resik-Resik Masjid</title>
+    <title>Donasi & Agenda Korrem - Komunitas Relawan Resik-Resik Masjid</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,15 +17,25 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased pb-24">
 
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-center items-center">
-            <img src="logo korem.jpg" alt="Logo Korrem" class="h-14 object-contain" onerror="this.src='https://placehold.co/400x120?text=KORREM+SRAGEN'">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <img src="logo korem.jpg" alt="Logo Korrem" class="h-11 object-contain" onerror="this.src='https://placehold.co/400x120?text=KORREM+SRAGEN'">
+            
+            <div class="flex items-center gap-2">
+                <h1 id="header-title" class="text-xs font-bold select-none cursor-pointer tracking-tight text-slate-400 active:opacity-60 transition text-right leading-none">
+                    Agenda<br><span class="text-[10px] font-normal text-slate-300">Mode</span>
+                </h1>
+                <div id="admin-actions" class="hidden flex gap-2 items-center">
+                    <button id="btn-add" class="bg-blue-600 hover:bg-blue-700 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg shadow-sm transition">+</button>
+                    <button id="btn-exit-admin" class="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 px-2 py-1 rounded-lg bg-gray-50">Keluar</button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
         
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
             <img src="donasi korrem.jpg" alt="Poster Donasi Korrem" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/600x800?text=Poster+Donasi+Korrem'">
@@ -68,6 +79,76 @@
             </div>
         </div>
 
+
+        <div class="border-t border-slate-200/60 pt-2">
+            <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 pl-1">
+                <i class="fa-solid fa-calendar-days text-blue-600"></i> Agenda & Jadwal Aksi
+            </h2>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
+          
+          <div class="flex justify-between items-center mb-4 bg-gray-50/50 p-1.5 rounded-xl border border-gray-100">
+            <button id="btn-prev-month" class="p-2 px-3 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg text-blue-600 font-semibold text-sm active:scale-95 transition shadow-sm">❮</button>
+            
+            <div class="relative flex flex-col items-center flex-1">
+              <button id="calendar-month-year" class="text-base font-bold text-slate-800 hover:bg-gray-100 px-3 py-1 rounded-lg transition flex items-center gap-1 select-none active:scale-[0.98]">
+                <span>Mei 2026</span> <span class="text-[10px] text-gray-400">▼</span>
+              </button>
+              <button id="btn-today" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 tracking-wide uppercase mt-0.5 transition active:scale-95">Hari Ini</button>
+              
+              <div id="nav-dropdown" class="hidden absolute top-12 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-xl shadow-xl p-3 z-20 w-64 flex gap-2 animate-fadeIn">
+                <select id="select-month" class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-1.5 text-sm focus:outline-none focus:border-blue-500"></select>
+                <select id="select-year" class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-1.5 text-sm focus:outline-none focus:border-blue-500"></select>
+              </div>
+            </div>
+
+            <button id="btn-next-month" class="p-2 px-3 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg text-blue-600 font-semibold text-sm active:scale-95 transition shadow-sm">❯</button>
+          </div>
+
+          <div class="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-400 mb-2">
+            <div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div><div>Min</div>
+          </div>
+
+          <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 space-y-2">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-sm">🔍</span>
+            <input type="text" id="search-input" placeholder="Cari nama atau alamat masjid..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-9 pr-4 text-sm focus:outline-none focus:border-blue-500 transition">
+          </div>
+          <div id="search-results-list" class="space-y-2 max-h-60 overflow-y-auto hidden pt-1"></div>
+        </div>
+
+        <div id="detail-card" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-4 space-y-3">
+          <div class="flex justify-between items-center border-b pb-2">
+            <h3 id="detail-date-title" class="font-bold text-gray-500 text-xs tracking-wider uppercase"></h3>
+            <button id="btn-close-detail" class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Tutup</button>
+          </div>
+          <div id="detail-list" class="space-y-3"></div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-bold text-xs text-gray-400 tracking-wider uppercase pl-1">Agenda Mendatang</h3>
+          <div id="next-agenda-list" class="space-y-2.5"></div>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm border border-blue-500/20">
+          <h3 class="font-bold text-xs text-blue-200 tracking-wider uppercase mb-2">Statistik Kontribusi</h3>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-extrabold tracking-tight" id="counter-total">0</p>
+              <p class="text-[11px] text-blue-100/80">Total Agenda Masuk</p>
+            </div>
+            <div class="w-px h-8 bg-blue-400/30"></div>
+            <div>
+              <p class="text-3xl font-extrabold text-emerald-300 tracking-tight" id="counter-selesai">0</p>
+              <p class="text-[11px] text-blue-100/80">Selesai Dibersihkan</p>
+            </div>
+          </div>
+        </div>
+
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
             <h3 class="text-sm font-bold text-slate-900">Media Sosial & Informasi</h3>
             <div class="grid grid-cols-2 gap-3">
@@ -82,7 +163,7 @@
 
     </main>
 
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-50">
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-40">
         <div class="max-w-md mx-auto">
             <a href="https://wa.me/6282335223009?text=Assalamualaikum%20Admin%20Korrem,%20Saya%20ingin%20mengonfirmasi%20donasi%20untuk%20Resik-Resik%20Masjid." 
                target="_blank" 
@@ -92,18 +173,80 @@
         </div>
     </div>
 
+    <div id="modal-form" class="hidden fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-4 z-50">
+      <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-xl">
+        <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Tambah Jadwal Korrem</h3>
+        <form id="schedule-form" class="space-y-4">
+          <input type="hidden" id="form-id">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Masjid</label>
+            <input required type="text" id="form-nama" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Alamat Masjid</label>
+            <textarea required id="form-alamat" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500" rows="2"></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Link Google Maps Masjid</label>
+            <input type="url" id="form-gmaps" placeholder="http://maps.google.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Takmir</label>
+              <input required type="text" id="form-takmir" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">No WA (628...)</label>
+              <input required type="text" id="form-wa" placeholder="6281234..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Tanggal Dibersihkan</label>
+              <input required type="date" id="form-tanggal" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Urutan Aksi (Aksi Ke-)</label>
+              <input required type="number" id="form-aksi-ke" min="1" placeholder="Contoh: 1" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 border-t pt-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Link Instagram Dok.</label>
+              <input type="url" id="form-instagram" placeholder="https://instagram.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Link Facebook Dok.</label>
+              <input type="url" id="form-facebook" placeholder="https://facebook.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 py-1">
+            <input type="checkbox" id="form-selesai" class="w-4 h-4 rounded text-blue-600">
+            <label for="form-selesai" class="text-sm font-medium text-slate-700">Sudah dibersihkan oleh Korrem</label>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button type="button" id="btn-cancel-form" class="flex-1 bg-gray-100 hover:bg-gray-200 text-slate-700 py-3 rounded-xl font-semibold text-sm transition">Batal</button>
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold text-sm transition shadow-md">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
+        // --- 1. SCRIPT LOGIKA DONASI ---
         function copyToClipboard() {
             const norekText = document.getElementById('norek').innerText;
             navigator.clipboard.writeText(norekText).then(() => {
                 const copyText = document.getElementById('copy-text');
                 const copyIcon = document.getElementById('copy-icon');
                 
-                // Mengubah UI saat berhasil disalin
                 copyText.innerText = 'Tersalin!';
                 copyIcon.className = 'fa-solid fa-check text-emerald-500';
                 
-                // Mengembalikan UI ke semula setelah 2 detik
                 setTimeout(() => {
                     copyText.innerText = 'Salin';
                     copyIcon.className = 'fa-regular fa-copy';
@@ -112,6 +255,487 @@
                 console.error('Gagal menyalin text: ', err);
             });
         }
+
+        // --- 2. SCRIPT LOGIKA KALENDER SUPABASE ---
+        const SUPABASE_URL = "https://pfichwnfffjzibusofao.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmaWNod25mZmZqemlidXNvZmFvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTgzMTQ2MiwiZXhwIjoyMDgxNDA3NDYyfQ.dDx1TLlOGT_ZYRWrRh8Rj1-3sn7tFhiAawiUb02KsVs";
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentDate = new Date();
+        let schedules = [];
+        let selectedDateStr = null;
+        let clickCount = 0;
+        let isAdmin = false;
+
+        const calendarGrid = document.getElementById('calendar-grid');
+        const monthYearTitle = document.getElementById('calendar-month-year');
+        const headerTitle = document.getElementById('header-title');
+        const adminActions = document.getElementById('admin-actions');
+        const detailCard = document.getElementById('detail-card');
+        const detailDateTitle = document.getElementById('detail-date-title');
+        const detailList = document.getElementById('detail-list');
+        const nextAgendaList = document.getElementById('next-agenda-list');
+        const searchInput = document.getElementById('search-input');
+        const searchResultsList = document.getElementById('search-results-list');
+        const modalForm = document.getElementById('modal-form');
+        const scheduleForm = document.getElementById('schedule-form');
+        
+        const navDropdown = document.getElementById('nav-dropdown');
+        const selectMonth = document.getElementById('select-month');
+        const selectYear = document.getElementById('select-year');
+
+        const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        function formatDateLocal(dateObj) {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+          initDropdownOptions();
+          fetchSchedules();
+          fetchNextAgendaGlobal();
+          fetchCounterMasjid();
+          setupEventListeners();
+        });
+
+        function initDropdownOptions() {
+          namaBulan.forEach((bulan, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.innerText = bulan;
+            selectMonth.appendChild(opt);
+          });
+
+          const startYear = 2018;
+          const endYear = new Date().getFullYear() + 5;
+          for (let y = startYear; y <= endYear; y++) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.innerText = y;
+            selectYear.appendChild(opt);
+          }
+        }
+
+        async function fetchCounterMasjid() {
+          const { count: totalCount, error: errTotal } = await supabaseClient
+            .from('masjid_schedules')
+            .select('*', { count: 'exact', head: true });
+
+          const { count: selesaiCount, error: errSelesai } = await supabaseClient
+            .from('masjid_schedules')
+            .select('*', { count: 'exact', head: true })
+            .eq('status_selesai', true);
+
+          if (!errTotal && totalCount !== null) {
+            document.getElementById('counter-total').innerText = totalCount;
+          }
+          if (!errSelesai && selesaiCount !== null) {
+            document.getElementById('counter-selesai').innerText = selesaiCount;
+          }
+        }
+
+        async function fetchSchedules() {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+          
+          const firstDayObj = new Date(year, month, 1);
+          const lastDayObj = new Date(year, month + 1, 0);
+
+          const firstDay = `${firstDayObj.getFullYear()}-${String(firstDayObj.getMonth() + 1).padStart(2, '0')}-01`;
+          const lastDay = `${lastDayObj.getFullYear()}-${String(lastDayObj.getMonth() + 1).padStart(2, '0')}-${String(lastDayObj.getDate()).padStart(2, '0')}`;
+
+          const { data, error } = await supabaseClient
+            .from('masjid_schedules')
+            .select('*')
+            .gte('jadwal_dibersihkan', firstDay)
+            .lte('jadwal_dibersihkan', lastDay);
+
+          if (!error && data) {
+            schedules = data;
+          }
+          
+          renderCalendar();
+          if (selectedDateStr) renderDetail();
+        }
+
+        async function fetchNextAgendaGlobal() {
+          const todayStr = formatDateLocal(new Date());
+
+          const { data, error } = await supabaseClient
+            .from('masjid_schedules')
+            .select('*')
+            .gte('jadwal_dibersihkan', todayStr)
+            .order('jadwal_dibersihkan', { ascending: true })
+            .order('aksi_ke', { ascending: true })
+            .limit(10);
+
+          if (!error && data) {
+            renderNextAgenda(data);
+          }
+        }
+
+        function renderCalendar() {
+          monthYearTitle.querySelector('span').innerText = currentDate.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+          
+          selectMonth.value = currentDate.getMonth();
+          selectYear.value = currentDate.getFullYear();
+
+          calendarGrid.innerHTML = '';
+
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+          
+          let startDay = new Date(year, month, 1).getDay();
+          startDay = startDay === 0 ? 6 : startDay - 1;
+
+          const totalDays = new Date(year, month + 1, 0).getDate();
+          const todayStr = formatDateLocal(new Date());
+
+          for (let i = 0; i < startDay; i++) {
+            calendarGrid.appendChild(document.createElement('div'));
+          }
+
+          for (let day = 1; day <= totalDays; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = formatDateLocal(date);
+            
+            const daySchedules = schedules.filter(s => s.jadwal_dibersihkan === dateStr);
+            const hasSchedule = daySchedules.length > 0;
+            const isAllFinished = hasSchedule && daySchedules.every(s => s.status_selesai === true);
+
+            const isSelected = selectedDateStr === dateStr;
+            const isToday = todayStr === dateStr;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            
+            let baseColors = 'text-slate-700 hover:bg-gray-100';
+            let outlineStyle = '';
+
+            if (isToday) {
+              baseColors = 'bg-blue-700 text-white font-bold shadow-md';
+            } else if (isAllFinished) {
+              baseColors = 'border-2 border-green-500 bg-green-50 text-green-700 font-bold';
+            } else if (hasSchedule) {
+              baseColors = 'border-2 border-red-500 bg-red-50 text-red-700 font-bold';
+            }
+
+            if (isSelected) {
+              outlineStyle = 'ring-2 ring-blue-500 ring-offset-2';
+            }
+
+            btn.className = `relative py-2.5 text-sm font-medium rounded-full flex flex-col items-center justify-center transition active:scale-95 aspect-square ${baseColors} ${outlineStyle}`;
+            btn.innerText = day;
+
+            btn.onclick = () => {
+              selectedDateStr = isSelected ? null : dateStr;
+              if(selectedDateStr) {
+                detailCard.classList.remove('hidden');
+                renderDetail();
+              } else {
+                detailCard.classList.add('hidden');
+              }
+              renderCalendar();
+            };
+
+            calendarGrid.appendChild(btn);
+          }
+        }
+
+        function renderDetail() {
+          detailDateTitle.innerText = `Jadwal Tanggal: ${new Date(selectedDateStr).toLocaleDateString('id-ID', { dateStyle: 'medium' })}`;
+          detailList.innerHTML = '';
+
+          const activeSchedules = schedules
+            .filter(s => s.jadwal_dibersihkan === selectedDateStr)
+            .sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
+
+          if (activeSchedules.length === 0) {
+            detailList.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">Tidak ada jadwal pembersihan di bulan yang aktif.</p>`;
+            return;
+          }
+
+          activeSchedules.forEach(item => {
+            let socialLinksHtml = '';
+            if (item.link_instagram || item.link_facebook) {
+              socialLinksHtml += `<div class="flex gap-1.5 pt-1.5 items-center flex-wrap">
+                <span class="text-[10px] text-gray-400 font-medium">Dokumentasi:</span>`;
+              if (item.link_instagram) {
+                socialLinksHtml += `<a href="${item.link_instagram}" target="_blank" class="bg-gradient-to-tr from-yellow-500 via-purple-500 to-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-semibold">📸 Instagram</a>`;
+              }
+              if (item.link_facebook) {
+                socialLinksHtml += `<a href="${item.link_facebook}" target="_blank" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-semibold">👥 Facebook</a>`;
+              }
+              socialLinksHtml += `</div>`;
+            }
+
+            let gmapsHtml = '';
+            if (item.gmaps) {
+              gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
+            }
+
+            const div = document.createElement('div');
+            div.className = "p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100 shadow-sm";
+            div.innerHTML = `
+              <div class="flex justify-between items-start gap-1">
+                <div class="min-w-0 flex-1">
+                  <span class="inline-block text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold mb-1">Aksi Ke-${item.aksi_ke || '-'}</span>
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <h4 class="font-bold text-base text-slate-800 truncate max-w-[180px]">${item.nama_masjid}</h4>
+                    ${gmapsHtml}
+                  </div>
+                </div>
+                <span class="text-[10px] shrink-0 px-2 py-0.5 rounded-full font-semibold ${item.status_selesai ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                  ${item.status_selesai ? 'Selesai' : 'Rencana'}
+                </span>
+              </div>
+              <p class="text-xs text-gray-600">📍 ${item.alamat_masjid}</p>
+              
+              ${socialLinksHtml}
+
+              <div class="text-xs text-gray-500 pt-2 border-t border-dashed flex justify-between items-center">
+                <div><p class="font-medium text-slate-700">Takmir: ${item.nama_takmir}</p></div>
+                <a href="https://wa.me/${item.no_wa_takmir ? item.no_wa_takmir.replace(/[^0-9]/g, '') : ''}" target="_blank" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold text-[11px]">💬 WhatsApp</a>
+              </div>
+              <div class="admin-edit-zone ${isAdmin ? 'flex' : 'hidden'} gap-2 pt-2 border-t mt-2">
+                <button onclick='window.openEditForm(${JSON.stringify(item)})' class="flex-1 bg-gray-200 text-slate-700 text-xs py-1.5 font-medium rounded-lg">Edit</button>
+                <button onclick="window.deleteSchedule(${item.id})" class="flex-1 bg-red-50 text-red-600 text-xs py-1.5 font-medium rounded-lg">Hapus</button>
+              </div>
+            `;
+            detailList.appendChild(div);
+          });
+        }
+
+        function handleSearch() {
+          const keyword = searchInput.value.toLowerCase().trim();
+          if (!keyword) {
+            searchResultsList.innerHTML = '';
+            searchResultsList.classList.add('hidden');
+            return;
+          }
+
+          const filtered = schedules.filter(s => 
+            s.nama_masjid.toLowerCase().includes(keyword) || 
+            s.alamat_masjid.toLowerCase().includes(keyword)
+          ).sort((a, b) => (a.aksi_ke || 0) - (b.aksi_ke || 0));
+
+          searchResultsList.innerHTML = '';
+          searchResultsList.classList.remove('hidden');
+
+          if (filtered.length === 0) {
+            searchResultsList.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Masjid tidak ditemukan di bulan ini.</p>`;
+            return;
+          }
+
+          filtered.forEach(item => {
+            const div = document.createElement('div');
+            div.className = "p-2.5 bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-xl flex justify-between items-center gap-2 cursor-pointer transition active:scale-[0.99]";
+            div.innerHTML = `
+              <div class="min-w-0 flex-1">
+                <h5 class="font-semibold text-xs text-slate-800 truncate"><span class="text-blue-600 font-bold">[Ke-${item.aksi_ke || '-'}]</span> ${item.nama_masjid}</h5>
+                <p class="text-[10px] text-gray-500 truncate">📍 ${item.alamat_masjid}</p>
+              </div>
+              <span class="text-[10px] shrink-0 font-bold text-gray-500 bg-white px-2 py-1 rounded-lg border">
+                ${new Date(item.jadwal_dibersihkan).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
+              </span>
+            `;
+            div.onclick = () => {
+              selectedDateStr = item.jadwal_dibersihkan;
+              detailCard.classList.remove('hidden');
+              renderCalendar();
+              renderDetail();
+              searchInput.value = '';
+              searchResultsList.classList.add('hidden');
+            };
+            searchResultsList.appendChild(div);
+          });
+        }
+
+        function renderNextAgenda(nextAgendas) {
+          nextAgendaList.innerHTML = '';
+
+          if (nextAgendas.length === 0) {
+            nextAgendaList.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-gray-400 border border-gray-200 text-sm shadow-sm">Belum ada agenda terdekat.</div>`;
+            return;
+          }
+
+          nextAgendas.forEach(item => {
+            const div = document.createElement('div');
+            div.className = "bg-white rounded-2xl p-3 shadow-sm border border-gray-200 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition active:scale-[0.99]";
+            
+            div.onclick = () => {
+              const targetDate = new Date(item.jadwal_dibersihkan);
+              currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+              selectedDateStr = item.jadwal_dibersihkan;
+              detailCard.classList.remove('hidden');
+              fetchSchedules();
+            };
+
+            let inlineGmaps = '';
+            if (item.gmaps) {
+              inlineGmaps = `<a href="${item.gmaps}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700 font-semibold text-[11px] inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">🗺️ Map</a>`;
+            }
+
+            div.innerHTML = `
+              <div class="min-w-0 flex-1">
+                <span class="inline-block text-[9px] font-bold bg-slate-100 text-slate-600 px-1 rounded mb-0.5">Aksi Ke-${item.aksi_ke || '-'}</span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-semibold text-slate-800 text-sm truncate max-w-[160px]">${item.nama_masjid}</h4>
+                  ${inlineGmaps}
+                </div>
+                <p class="text-[11px] text-gray-400 truncate">📍 ${item.alamat_masjid}</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="block text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">
+                  ${new Date(item.jadwal_dibersihkan).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: '2-digit' })}
+                </span>
+              </div>
+            `;
+            nextAgendaList.appendChild(div);
+          });
+        }
+
+        function setupEventListeners() {
+          searchInput.addEventListener('input', handleSearch);
+
+          monthYearTitle.onclick = (e) => {
+            e.stopPropagation();
+            navDropdown.classList.toggle('hidden');
+          };
+
+          const handleDropdownChange = () => {
+            currentDate = new Date(parseInt(selectYear.value), parseInt(selectMonth.value), 1);
+            navDropdown.classList.add('hidden');
+            fetchSchedules();
+          };
+
+          selectMonth.onchange = handleDropdownChange;
+          selectYear.onchange = handleDropdownChange;
+
+          document.addEventListener('click', () => {
+            navDropdown.classList.add('hidden');
+          });
+          navDropdown.onclick = (e) => e.stopPropagation();
+
+          // KETUK RAHASIA 5X PADA TEXT "AGENDA MODE" DI HEADER UNTUK MASUK MODE ADMIN
+          headerTitle.onclick = () => {
+            if (isAdmin) return;
+            clickCount++;
+            if (clickCount === 5) {
+              isAdmin = true;
+              clickCount = 0;
+              alert('🔓 Mode Administrator Aktif!');
+              adminActions.classList.remove('hidden');
+              headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">Admin Active</span>';
+              if (selectedDateStr) renderDetail();
+            }
+            setTimeout(() => { clickCount = 0; }, 3000);
+          };
+
+          document.getElementById('btn-exit-admin').onclick = () => {
+            isAdmin = false;
+            adminActions.classList.add('hidden');
+            headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-normal text-slate-300">Mode</span>';
+            if (selectedDateStr) renderDetail();
+          };
+
+          document.getElementById('btn-prev-month').onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            fetchSchedules();
+          };
+          document.getElementById('btn-next-month').onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            fetchSchedules();
+          };
+
+          document.getElementById('btn-today').onclick = () => {
+            const today = new Date();
+            currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            selectedDateStr = formatDateLocal(today);
+            
+            detailCard.classList.remove('hidden');
+            fetchSchedules(); 
+          };
+
+          document.getElementById('btn-add').onclick = () => {
+            document.getElementById('modal-title').innerText = "Tambah Jadwal Korrem";
+            scheduleForm.reset();
+            document.getElementById('form-id').value = '';
+            
+            if (selectedDateStr) {
+              document.getElementById('form-tanggal').value = selectedDateStr;
+              const countToday = schedules.filter(s => s.jadwal_dibersihkan === selectedDateStr).length;
+              document.getElementById('form-aksi-ke').value = countToday + 1;
+            } else {
+              document.getElementById('form-tanggal').value = formatDateLocal(new Date());
+              document.getElementById('form-aksi-ke').value = 1;
+            }
+            modalForm.classList.remove('hidden');
+          };
+
+          document.getElementById('btn-cancel-form').onclick = () => modalForm.classList.add('hidden');
+          document.getElementById('btn-close-detail').onclick = () => {
+            selectedDateStr = null;
+            detailCard.classList.add('hidden');
+            renderCalendar();
+          };
+
+          scheduleForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('form-id').value;
+            const payload = {
+              nama_masjid: document.getElementById('form-nama').value,
+              alamat_masjid: document.getElementById('form-alamat').value,
+              gmaps: document.getElementById('form-gmaps').value,
+              nama_takmir: document.getElementById('form-takmir').value,
+              no_wa_takmir: document.getElementById('form-wa').value,
+              jadwal_dibersihkan: document.getElementById('form-tanggal').value,
+              aksi_ke: parseInt(document.getElementById('form-aksi-ke').value) || 1,
+              status_selesai: document.getElementById('form-selesai').checked,
+              link_instagram: document.getElementById('form-instagram').value,
+              link_facebook: document.getElementById('form-facebook').value
+            };
+
+            if (id) {
+              await supabaseClient.from('masjid_schedules').update(payload).eq('id', id);
+            } else {
+              await supabaseClient.from('masjid_schedules').insert([payload]);
+            }
+
+            modalForm.classList.add('hidden');
+            fetchSchedules();
+            fetchNextAgendaGlobal();
+            fetchCounterMasjid();
+          };
+        }
+
+        window.openEditForm = (item) => {
+          document.getElementById('modal-title').innerText = "Edit Jadwal Masjid";
+          document.getElementById('form-id').value = item.id;
+          document.getElementById('form-nama').value = item.nama_masjid;
+          document.getElementById('form-alamat').value = item.alamat_masjid;
+          document.getElementById('form-gmaps').value = item.gmaps || '';
+          document.getElementById('form-takmir').value = item.nama_takmir;
+          document.getElementById('form-wa').value = item.no_wa_takmir;
+          document.getElementById('form-tanggal').value = item.jadwal_dibersihkan;
+          document.getElementById('form-aksi-ke').value = item.aksi_ke || 1;
+          document.getElementById('form-selesai').checked = item.status_selesai;
+          document.getElementById('form-instagram').value = item.link_instagram || '';
+          document.getElementById('form-facebook').value = item.link_facebook || '';
+          modalForm.classList.remove('hidden');
+        };
+
+        window.deleteSchedule = async (id) => {
+          if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
+            await supabaseClient.from('masjid_schedules').delete().eq('id', id);
+            fetchSchedules();
+            fetchNextAgendaGlobal();
+            fetchCounterMasjid();
+          }
+        };
     </script>
 </body>
 </html>
