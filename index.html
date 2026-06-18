@@ -115,7 +115,6 @@
 
     <main class="max-w-md mx-auto px-4 py-6 space-y-6">
         
-        <!-- POSTER KAMPANYE -->
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
             <img src="donasi korrem.jpg" alt="Poster Donasi Korrem" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/600x800?text=Poster+Donasi+Komunitas+KORREM'">
             <div class="p-5">
@@ -129,14 +128,12 @@
             </div>
         </div>
 
-        <!-- INFORMASI REKENING DONASI -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-wallet text-teal-600"></i> Informasi Rekening Donasi
             </h2>
             
             <div class="space-y-3">
-                <!-- Bank BSI -->
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 relative">
                     <div class="flex justify-between items-start">
                         <div>
@@ -150,7 +147,6 @@
                     </div>
                 </div>
 
-                <!-- Bank BRI -->
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 relative">
                     <div class="flex justify-between items-start">
                         <div>
@@ -164,7 +160,6 @@
                     </div>
                 </div>
 
-                <!-- Bank Jateng -->
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 relative">
                     <div class="flex justify-between items-start">
                         <div>
@@ -180,7 +175,6 @@
             </div>
 
         
-        <!-- ===== MINI GALLERY CAROUSEL ===== -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-images text-teal-600"></i> Galeri Kegiatan Korrem
@@ -205,7 +199,6 @@
                     </div>
                 </div>
 
-                <!-- Tombol Prev / Next -->
                 <button class="carousel-btn prev" id="carouselPrev" aria-label="Sebelumnya">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
@@ -213,16 +206,11 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
 
-                <!-- Counter pojok kanan bawah -->
                 <div class="carousel-counter" id="carouselCounter">1 / 5</div>
             </div>
 
-            <!-- Dot Indicator -->
             <div class="carousel-dots" id="carouselDots"></div>
         </div>
-        <!-- ===== END CAROUSEL ===== -->
-
-        <!-- AGENDA & JADWAL KALENDER -->
         <div class="border-t border-slate-200/60 pt-2">
             <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 pl-1">
                 <i class="fa-solid fa-calendar-days text-blue-600"></i> Agenda & Jadwal Aksi
@@ -255,7 +243,6 @@
           <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
         </div>
 
-        <!-- SEARCH BOX -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-3 space-y-2">
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-sm">🔍</span>
@@ -264,7 +251,6 @@
           <div id="search-results-list" class="space-y-2 max-h-60 overflow-y-auto hidden pt-1"></div>
         </div>
 
-        <!-- DETAIL MASJID POPUP CARD -->
         <div id="detail-card" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 p-4 space-y-3">
           <div class="flex justify-between items-center border-b pb-2">
             <h3 id="detail-date-title" class="font-bold text-gray-500 text-xs tracking-wider uppercase"></h3>
@@ -273,13 +259,11 @@
           <div id="detail-list" class="space-y-3"></div>
         </div>
 
-        <!-- AGENDA MENDATANG LIST -->
         <div class="space-y-2">
           <h3 class="font-bold text-xs text-gray-400 tracking-wider uppercase pl-1">Agenda Mendatang</h3>
           <div id="next-agenda-list" class="space-y-2.5"></div>
         </div>
 
-        <!-- COUNTER STATISTIK -->
         <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 text-white shadow-sm border border-blue-500/20">
           <h3 class="font-bold text-xs text-blue-200 tracking-wider uppercase mb-2">Statistik Kontribusi</h3>
           <div class="flex items-center justify-between">
@@ -295,7 +279,6 @@
           </div>
         </div>
 
-        <!-- SOSIAL MEDIA FOOTER LINKS -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
             <h3 class="text-sm font-bold text-slate-900">Media Sosial & Informasi</h3>
             <div class="grid grid-cols-2 gap-3">
@@ -310,7 +293,6 @@
 
     </main>
 
-    <!-- STICKY BUTTON BOTTOM -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-40">
         <div class="max-w-md mx-auto">
             <a href="https://wa.me/6282335223009?text=Assalamualaikum%20Admin%20Korrem,%20Saya%20ingin%20mengonfirmasi%20donasi%20untuk%20Resik-Resik%20Masjid." 
@@ -321,7 +303,6 @@
         </div>
     </div>
 
-    <!-- MODAL FORM INPUT JADWAL (ADMIN ONLY) -->
     <div id="modal-form" class="hidden fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-4 z-50">
       <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-xl">
         <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Tambah Jadwal Korrem</h3>
@@ -381,7 +362,6 @@
       </div>
     </div>
 
-    <!-- LOGIKA INTERAKTIF SCRIPT -->
     <script>
         // --- 1. SCRIPT LOGIKA DONASI ---
         function copyToClipboard(norekId, textId, iconId) {
@@ -610,6 +590,18 @@
             }
             let gmapsHtml = '';
             if (item.gmaps) gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
+            
+            // Mengatur kondisional tampilan informasi kontak takmir hanya saat mode admin aktif
+            let takmirZoneHtml = '';
+            if (isAdmin) {
+              takmirZoneHtml = `
+                <div class="text-xs text-gray-500 pt-2 border-t border-dashed flex justify-between items-center">
+                  <div><p class="font-medium text-slate-700">Takmir: ${item.nama_takmir}</p></div>
+                  <a href="https://wa.me/${item.no_wa_takmir ? item.no_wa_takmir.replace(/[^0-9]/g, '') : ''}" target="_blank" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold text-[11px]">💬 WhatsApp</a>
+                </div>
+              `;
+            }
+
             const div = document.createElement('div');
             div.className = "p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100 shadow-sm";
             div.innerHTML = `
@@ -627,10 +619,7 @@
               </div>
               <p class="text-xs text-gray-600">📍 ${item.alamat_masjid}</p>
               ${socialLinksHtml}
-              <div class="text-xs text-gray-500 pt-2 border-t border-dashed flex justify-between items-center">
-                <div><p class="font-medium text-slate-700">Takmir: ${item.nama_takmir}</p></div>
-                <a href="https://wa.me/${item.no_wa_takmir ? item.no_wa_takmir.replace(/[^0-9]/g, '') : ''}" target="_blank" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold text-[11px]">💬 WhatsApp</a>
-              </div>
+              ${takmirZoneHtml}
               <div class="admin-edit-zone ${isAdmin ? 'flex' : 'hidden'} gap-2 pt-2 border-t mt-2">
                 <button onclick='window.openEditForm(${JSON.stringify(item)})' class="flex-1 bg-gray-200 text-slate-700 text-xs py-1.5 font-medium rounded-lg">Edit</button>
                 <button onclick="window.deleteSchedule(${item.id})" class="flex-1 bg-red-50 text-red-600 text-xs py-1.5 font-medium rounded-lg">Hapus</button>
@@ -679,7 +668,7 @@
             div.className = "bg-white rounded-2xl p-3 shadow-sm border border-gray-200 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition active:scale-[0.99]";
             div.onclick = () => {
               const targetDate = new Date(item.jadwal_dibersihkan);
-              currentDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+              current = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
               selectedDateStr = item.jadwal_dibersihkan;
               detailCard.classList.remove('hidden');
               fetchSchedules();
