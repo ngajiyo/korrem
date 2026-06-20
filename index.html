@@ -173,8 +173,8 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-        
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-images text-teal-600"></i> Galeri Kegiatan Korrem
@@ -211,6 +211,7 @@
 
             <div class="carousel-dots" id="carouselDots"></div>
         </div>
+
         <div class="border-t border-slate-200/60 pt-2">
             <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 pl-1">
                 <i class="fa-solid fa-calendar-days text-blue-600"></i> Agenda & Jadwal Aksi
@@ -414,7 +415,6 @@
             prev.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
             next.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
 
-            // Swipe touch support
             let touchStartX = 0;
             track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
             track.addEventListener('touchend', e => {
@@ -425,7 +425,6 @@
                 }
             }, { passive: true });
 
-            // Auto-play setiap 4 detik
             function startAuto() {
                 autoTimer = setInterval(() => goTo(current + 1), 4000);
             }
@@ -504,7 +503,6 @@
           const { count: totalCount } = await supabaseClient.from('masjid_schedules').select('*', { count: 'exact', head: true });
           const { count: selesaiCount } = await supabaseClient.from('masjid_schedules').select('*', { count: 'exact', head: true }).eq('status_selesai', true);
           
-          // Menambahkan data historis (Offline/Database Lama) ke jumlah dari Supabase
           if (totalCount !== null) {
             document.getElementById('counter-total').innerText = totalCount + 341;
           }
@@ -591,7 +589,6 @@
             let gmapsHtml = '';
             if (item.gmaps) gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
             
-            // Mengatur kondisional tampilan informasi kontak takmir hanya saat mode admin aktif
             let takmirZoneHtml = '';
             if (isAdmin) {
               takmirZoneHtml = `
@@ -641,7 +638,7 @@
             div.className = "p-2.5 bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-xl flex justify-between items-center gap-2 cursor-pointer transition active:scale-[0.99]";
             div.innerHTML = `
               <div class="min-w-0 flex-1">
-                <h5 class="font-semibold text-xs text-slate-800 truncate"><span class="text-blue-600 font-bold">[Ke-${item.aksi_ke || '-'}]</span> ${item.nama_masjid}</h5>
+                <h5 class="font-semibold text-xs text-slate-800 truncate"><span class="text-blue-600 font-bold">[Ke-${item.aksi_ke || '-'}</span> ${item.nama_masjid}</h5>
                 <p class="text-[10px] text-gray-500 truncate">📍 ${item.alamat_masjid}</p>
               </div>
               <span class="text-[10px] shrink-0 font-bold text-gray-500 bg-white px-2 py-1 rounded-lg border">
@@ -660,21 +657,26 @@
           });
         }
 
+        // --- RENDER DAFTAR AGENDA MENDATANG DENGAN DETAIL INLINE ---
         function renderNextAgenda(nextAgendas) {
           nextAgendaList.innerHTML = '';
-          if (nextAgendas.length === 0) { nextAgendaList.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-gray-400 border border-gray-200 text-sm shadow-sm">Belum ada agenda terdekat.</div>`; return; }
+          if (nextAgendas.length === 0) { 
+            nextAgendaList.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center text-gray-400 border border-gray-200 text-sm shadow-sm">Belum ada agenda terdekat.</div>`; 
+            return; 
+          }
+          
           nextAgendas.forEach(item => {
+            const wrapper = document.createElement('div');
+            wrapper.className = "space-y-2";
+
             const div = document.createElement('div');
             div.className = "bg-white rounded-2xl p-3 shadow-sm border border-gray-200 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition active:scale-[0.99]";
-            div.onclick = () => {
-              const targetDate = new Date(item.jadwal_dibersihkan);
-              current = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
-              selectedDateStr = item.jadwal_dibersihkan;
-              detailCard.classList.remove('hidden');
-              fetchSchedules();
-            };
+            
             let inlineGmaps = '';
-            if (item.gmaps) inlineGmaps = `<a href="${item.gmaps}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700 font-semibold text-[11px] inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">🗺️ Map</a>`;
+            if (item.gmaps) {
+              inlineGmaps = `<a href="${item.gmaps}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700 font-semibold text-[11px] inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">🗺️ Map</a>`;
+            }
+            
             div.innerHTML = `
               <div class="min-w-0 flex-1">
                 <span class="inline-block text-[9px] font-bold bg-slate-100 text-slate-600 px-1 rounded mb-0.5">Aksi Ke-${item.aksi_ke || '-'}</span>
@@ -690,7 +692,72 @@
                 </span>
               </div>
             `;
-            nextAgendaList.appendChild(div);
+
+            const detailContainer = document.createElement('div');
+            detailContainer.className = "hidden bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 animate-fadeIn mx-1 shadow-inner";
+
+            div.onclick = () => {
+              if (!detailContainer.classList.contains('hidden')) {
+                detailContainer.classList.add('hidden');
+                return;
+              }
+
+              // Tutup detail inline lain yang mungkin terbuka
+              document.querySelectorAll('#next-agenda-list > div > div:last-child').forEach(el => el.classList.add('hidden'));
+
+              let socialLinksHtml = '';
+              if (item.link_instagram || item.link_facebook) {
+                socialLinksHtml += `<div class="flex gap-1.5 pt-1.5 items-center flex-wrap"><span class="text-[10px] text-gray-400 font-medium">Dokumentasi:</span>`;
+                if (item.link_instagram) socialLinksHtml += `<a href="${item.link_instagram}" target="_blank" class="bg-gradient-to-tr from-yellow-500 via-purple-500 to-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-semibold">📸 Instagram</a>`;
+                if (item.link_facebook) socialLinksHtml += `<a href="${item.link_facebook}" target="_blank" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-semibold">👥 Facebook</a>`;
+                socialLinksHtml += `</div>`;
+              }
+
+              let gmapsHtml = '';
+              if (item.gmaps) {
+                gmapsHtml = `<a href="${item.gmaps}" target="_blank" class="inline-flex items-center gap-0.5 ml-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-1.5 py-0.5 rounded text-[10px] font-semibold transition shrink-0">📍 Peta Lokasi</a>`;
+              }
+              
+              let takmirZoneHtml = '';
+              if (isAdmin) {
+                takmirZoneHtml = `
+                  <div class="text-xs text-gray-500 pt-2 border-t border-dashed border-gray-300 flex justify-between items-center">
+                    <div><p class="font-medium text-slate-700">Takmir: ${item.nama_takmir}</p></div>
+                    <a href="https://wa.me/${item.no_wa_takmir ? item.no_wa_takmir.replace(/[^0-9]/g, '') : ''}" target="_blank" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold text-[11px]">💬 WhatsApp</a>
+                  </div>
+                `;
+              }
+
+              detailContainer.innerHTML = `
+                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Detail Aksi</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${item.status_selesai ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                    ${item.status_selesai ? 'Selesai' : 'Rencana'}
+                  </span>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <h4 class="font-bold text-base text-slate-800">${item.nama_masjid}</h4>
+                    ${gmapsHtml}
+                  </div>
+                  <p class="text-xs text-gray-600">📍 ${item.alamat_masjid}</p>
+                  <p class="text-[11px] text-gray-400 font-medium">🗓️ Tanggal Aksi: ${new Date(item.jadwal_dibersihkan).toLocaleDateString('id-ID', { dateStyle: 'long' })}</p>
+                  ${socialLinksHtml}
+                  ${takmirZoneHtml}
+                  
+                  <div class="admin-edit-zone ${isAdmin ? 'flex' : 'hidden'} gap-2 pt-2 border-t border-gray-200 mt-2">
+                    <button onclick='window.openEditForm(${JSON.stringify(item)})' class="flex-1 bg-gray-200 hover:bg-gray-300 text-slate-700 text-xs py-1.5 font-medium rounded-lg transition">Edit</button>
+                    <button onclick="window.deleteSchedule(${item.id})" class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs py-1.5 font-medium rounded-lg transition">Hapus</button>
+                  </div>
+                </div>
+              `;
+
+              detailContainer.classList.remove('hidden');
+            };
+
+            wrapper.appendChild(div);
+            wrapper.appendChild(detailContainer);
+            nextAgendaList.appendChild(wrapper);
           });
         }
 
@@ -706,6 +773,7 @@
           selectYear.onchange = handleDropdownChange;
           document.addEventListener('click', () => navDropdown.classList.add('hidden'));
           navDropdown.onclick = (e) => e.stopPropagation();
+          
           headerTitle.onclick = () => {
             if (isAdmin) return;
             clickCount++;
@@ -715,15 +783,19 @@
               adminActions.classList.remove('hidden');
               headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">Admin Active</span>';
               if (selectedDateStr) renderDetail();
+              fetchNextAgendaGlobal(); // Re-render agenda list agar edit zone muncul jika terbuka
             }
             setTimeout(() => { clickCount = 0; }, 3000);
           };
+          
           document.getElementById('btn-exit-admin').onclick = () => {
             isAdmin = false;
             adminActions.classList.add('hidden');
             headerTitle.innerHTML = 'Agenda<br><span class="text-[10px] font-normal text-slate-300">Mode</span>';
             if (selectedDateStr) renderDetail();
+            fetchNextAgendaGlobal(); // Re-render agenda list untuk menyembunyikan edit zone
           };
+          
           document.getElementById('btn-prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); fetchSchedules(); };
           document.getElementById('btn-next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); fetchSchedules(); };
           document.getElementById('btn-today').onclick = () => {
@@ -733,6 +805,7 @@
             detailCard.classList.remove('hidden');
             fetchSchedules();
           };
+          
           document.getElementById('btn-add').onclick = () => {
             document.getElementById('modal-title').innerText = "Tambah Jadwal Korrem";
             scheduleForm.reset();
@@ -747,12 +820,14 @@
             }
             modalForm.classList.remove('hidden');
           };
+          
           document.getElementById('btn-cancel-form').onclick = () => modalForm.classList.add('hidden');
           document.getElementById('btn-close-detail').onclick = () => {
             selectedDateStr = null;
             detailCard.classList.add('hidden');
             renderCalendar();
           };
+          
           scheduleForm.onsubmit = async (e) => {
             e.preventDefault();
             const id = document.getElementById('form-id').value;
